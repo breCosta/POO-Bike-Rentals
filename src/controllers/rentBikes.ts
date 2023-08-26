@@ -1,16 +1,17 @@
-import { Bike } from "./bike";
-import { User } from "./user";
+import { Bike } from "../bike";
+import { User } from "../user";
 
 export class RentBikes {
     user: User;
     bike: Bike;
-    /*daysRent: number;*/
+    daysRent: number;
     dateRent: Date;
     dateReturn: Date;
 
     constructor(user: User, bike: Bike, daysRent: number, dateRent: Date, dateReturn: Date) {
         this.user = user;
         this.bike = bike;
+        this.daysRent = daysRent;
         this.dateRent = dateRent;
         this.dateReturn = dateReturn;
     }
@@ -24,8 +25,10 @@ export class RentBikes {
     }
 
    rentTime() : void {
-        let dataAtual = new Date();
-        /*aqui faz a comparação se a data atual é igual a data de retorno. e seta a disponiblidade da bike*/
+        const currentDate = new Date();
+        if (currentDate >= this.dateReturn) {
+            this.bike.rent = false;
+        }
    }
     
 }
