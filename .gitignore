@@ -1,0 +1,10 @@
+*.js
+!_*.js
+node_modules
+output
+*.txt
+dist/**/*
+.env
+tsconfig.json
+package-lock.json
+package.json
