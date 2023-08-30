@@ -1,25 +1,18 @@
+import { Model } from "./model";
+
 export class Bike {
-    id: number;
-    model: string;
-    size: string;
-    rent: boolean = false; //esta alugada?
-    // returnDate: Date;
-    /*outras infos como tipo, modelo, etc...*/
-
-    constructor(id: number, model: string, size: string) {
-        this.id = id;
-        this.model = model;
-        this.size = size;
-    }
-
-    isAvailable() : boolean {
-        if (!this.rent){
-            return true;
-        } 
-        else {
-            return false;
-        }
-    }
-
+   
+    constructor( 
+        public type: string,
+        public size: string,
+        public bodySize: number,
+        public maxload: number,
+        public rate: number,
+        public description: string,
+        public ratings: number,
+        public imageUrls: string[],
+        public id?: string
+    ){}
+    
 
 }
