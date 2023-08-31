@@ -56,11 +56,10 @@ export class App {
         this.rents.push(Rent.create(r, bike, user, startDate, endDate))
     }
 
-    returnBike(bikeId: string, userEmail:string):void{
+    returnBike(bikeId: string, userEmail:string, date:Date):void{
         const bike = this.findBike(bikeId)
         const user = this.findUser(userEmail)
         const r = this.rents.findIndex(rent => rent.bike === bike && rent.user === user && !rent.dateReturn)
-        const date = new Date()
         this.rents[r].dateReturn = date
     }
 
