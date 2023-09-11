@@ -1,4 +1,5 @@
 import { Bike } from "./bike"
+import { Crypt } from "./crypt"
 import { Rent } from "./rent"
 import { User } from "./user"
 import crypto from "crypto"
@@ -7,14 +8,10 @@ export class App {
     users: User[] = []
     bikes: Bike[] = []
     rents: Rent[] = []
+    crypt: Crypt = new Crypt()
 
-    /* 
-    - listagem de usuários
-    - listagem de reservas/aluguéis
-    - listagem de bikes 
-    */
 
-    listUsers() {
+    listUsers() : User[] {
         const list = this.users
         if(!list){
             return list
@@ -22,7 +19,7 @@ export class App {
         throw new Error ("No registered users")
     }
     
-    listBikes() {
+    listBikes() : Bike[] {
         const list = this.bikes
         if(!list){
             return list
@@ -30,7 +27,7 @@ export class App {
         throw new Error ("No registered bikes")
     }
 
-    listRents() {
+    listRents() : Rent[] {
         const list = this.rents
         if(!list){
             return list
@@ -47,7 +44,7 @@ export class App {
         return this.users.findIndex(user => user.email === email)
     }
 
-    registerUser(user: User) : string {
+    async registerUser(user: User) :  Promise<string> {
         for(const rUser of this.users){
             if(rUser.email === user.email){
                 throw new Error('E-mail already exists')
@@ -55,8 +52,18 @@ export class App {
         } 
         const idUser = crypto.randomUUID()
         user.id = idUser
+        const encryptedPassword = await this.crypt.encrypt(user.password)
+        user.password = encryptedPassword
         this.users.push(user)
         return idUser
+    }
+
+    async authenticate(userEmail: string, password: string) : Promise<boolean> {
+        const user = this.findUser(userEmail)
+        if(!user){
+            throw new Error ("User not found.")
+        }
+        return await this.crypt.compare(user.password, password)
     }
 
     removeUser(email: string) : void {
@@ -80,26 +87,38 @@ export class App {
         return idBike
     }
 
-    rentBike(bikeId: string, userEmail:string, startDate:Date, endDate:Date) : void {
+    rentBike(bikeId: string, userEmail:string) : void {
         const bike = this.findBike(bikeId)
         if (!bike) {
             throw new Error('Bike not found.')
+        }
+        if (!bike.available){
+            throw new Error("Unavailable bike.")
         }
         const user = this.findUser(userEmail)
         if (!user) {
             throw new Error('User not found.')
         }
-        const r = this.rents.filter(rent => rent.bike === bike && !rent.dateReturn)
-        this.rents.push(Rent.create(r, bike, user, startDate, endDate))
+        const newRent = new Rent(user, bike, new Date())
+        bike.available = false
+        this.rents.push(newRent)
     }
 
-    returnBike(bikeId: string, userEmail:string):void{
+    returnBike(bikeId: string, userEmail:string):number{
         const today = new Date()
-        const r = this.rents.find(rent => rent.bike.id === bikeId && rent.user.email === userEmail && !rent.dateReturn)
-        if (r) {
-            r.dateReturn = today
-            return
+        const rent = this.rents.find(rent => rent.bike.id === bikeId && rent.user.email === userEmail && !rent.end)
+        if (!rent) {
+            throw new Error('Rent not found')
         }
-        throw new Error('Rent not found')
+        rent.end = today
+        rent.bike.available = true
+        const hours = diff_hours(rent.end, rent.start)
+        return hours * rent.bike.rate
     }
+}
+
+function diff_hours(dt2: Date, dt1: Date){
+    var diff = (dt2.getTime() - dt1.getTime()) / 1000
+    diff /= (60*60)
+    return Math.abs(diff)
 }
