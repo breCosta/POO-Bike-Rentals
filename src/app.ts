@@ -8,10 +8,35 @@ export class App {
     bikes: Bike[] = []
     rents: Rent[] = []
 
-    //register bike
-    //remove user
-    //rent bike
-    //return bike
+    /* 
+    - listagem de usuários
+    - listagem de reservas/aluguéis
+    - listagem de bikes 
+    */
+
+    listUsers() {
+        const list = this.users
+        if(!list){
+            return list
+        }
+        throw new Error ("No registered users")
+    }
+    
+    listBikes() {
+        const list = this.bikes
+        if(!list){
+            return list
+        }
+        throw new Error ("No registered bikes")
+    }
+
+    listRents() {
+        const list = this.rents
+        if(!list){
+            return list
+        }
+        throw new Error ("No registered rents")
+    }
 
     /**********USER***********/
     findUser(email:string) : User {
@@ -22,45 +47,59 @@ export class App {
         return this.users.findIndex(user => user.email === email)
     }
 
-    registerUser(user: User) : void{
+    registerUser(user: User) : string {
         for(const rUser of this.users){
             if(rUser.email === user.email){
-                throw new Error('Same email')
+                throw new Error('E-mail already exists')
             }
         } 
-        user.id = crypto.randomUUID()
+        const idUser = crypto.randomUUID()
+        user.id = idUser
         this.users.push(user)
+        return idUser
     }
 
     removeUser(email: string) : void {
         const userIndex = this.findIndexUser(email)
-        this.users.splice(userIndex, 1)
+        if (userIndex !== -1) {
+            this.users.splice(userIndex, 1)
+            return
+        }
+        throw new Error('User does not exist.')
     }
-
     /**********BIKE***********/
 
     findBike (id:string): Bike{
         return this.bikes.find(bike => bike.id === id)
     }
 
-    registerBike(bike: Bike)  {
-        bike.id = crypto.randomUUID()
+    registerBike(bike: Bike) : string {
+        const idBike = crypto.randomUUID()
+        bike.id = idBike
         this.bikes.push(bike)
-        return bike.id
+        return idBike
     }
 
     rentBike(bikeId: string, userEmail:string, startDate:Date, endDate:Date) : void {
         const bike = this.findBike(bikeId)
+        if (!bike) {
+            throw new Error('Bike not found.')
+        }
         const user = this.findUser(userEmail)
-        const r = this.rents.filter(rent => rent.bike === bike)
+        if (!user) {
+            throw new Error('User not found.')
+        }
+        const r = this.rents.filter(rent => rent.bike === bike && !rent.dateReturn)
         this.rents.push(Rent.create(r, bike, user, startDate, endDate))
     }
 
-    returnBike(bikeId: string, userEmail:string, date:Date):void{
-        const bike = this.findBike(bikeId)
-        const user = this.findUser(userEmail)
-        const r = this.rents.findIndex(rent => rent.bike === bike && rent.user === user && !rent.dateReturn)
-        this.rents[r].dateReturn = date
+    returnBike(bikeId: string, userEmail:string):void{
+        const today = new Date()
+        const r = this.rents.find(rent => rent.bike.id === bikeId && rent.user.email === userEmail && !rent.dateReturn)
+        if (r) {
+            r.dateReturn = today
+            return
+        }
+        throw new Error('Rent not found')
     }
-
 }
