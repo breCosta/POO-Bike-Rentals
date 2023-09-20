@@ -1,3 +1,4 @@
+import { Location } from "./location"
 
 export class Bike {
    
@@ -11,6 +12,7 @@ export class Bike {
         public ratings: number,
         public imageUrls: string[],
         public available: boolean = true,
+        public location: Location = new Location(0.0, 0.0),
         public id?: string
     ){}
     
