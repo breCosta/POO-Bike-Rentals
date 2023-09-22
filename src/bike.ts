@@ -3,6 +3,7 @@ import { Location } from "./location"
 export class Bike {
    
     constructor( 
+        public name: string,
         public type: string,
         public size: string,
         public bodySize: number,

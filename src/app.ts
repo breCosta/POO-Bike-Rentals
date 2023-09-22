@@ -1,7 +1,9 @@
 import { Bike } from "./bike"
+import { BikeNotFoundError } from "./errors/bike-notfound-error"
 import { Crypt } from "./crypt"
 import { Rent } from "./rent"
 import { User } from "./user"
+import { Location } from "./location"
 import crypto from "crypto"
 
 export class App {
@@ -77,7 +79,11 @@ export class App {
     /**********BIKE***********/
 
     findBike (id:string): Bike{
-        return this.bikes.find(bike => bike.id === id)
+        const bike = this.bikes.find(bike => bike.id === id)
+        if(!bike){
+            throw new BikeNotFoundError()
+        }
+        return bike
     }
 
     registerBike(bike: Bike) : string {
@@ -114,6 +120,12 @@ export class App {
         rent.bike.available = true
         const hours = diff_hours(rent.end, rent.start)
         return hours * rent.bike.rate
+    }
+
+    moveBikeTo(bikeId: string, location: Location){
+        const bike = this.findBike(bikeId)
+        bike.location.latitude = location.latitude
+        bike.location.longitude = location.longitude
     }
 }
 

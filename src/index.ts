@@ -7,7 +7,7 @@ import sinon from 'sinon'
 async function main(){
     const clock = sinon.useFakeTimers()
     const app = new App()
-    const bike = new Bike('mountain bike', 'g', 50, 500, 100.0, 'grande', 5, [])
+    const bike = new Bike('bike1', 'mountain bike', 'g', 50, 500, 100.0, 'grande', 5, [])
     //const bike2 = new Bike('outraBike', 'm', 23, 300, 95.5, 'pequena', 5, [])
     const user = new User('brenda', 'i378127', 'brenda@email.com', '1234')
     //const user2 = new User('camila', '12314', 'camila@email.com', '1234')
