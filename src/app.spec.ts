@@ -117,14 +117,14 @@ describe('App', () => {
     
             expect(() => {
                 app.authenticate(userEmail, password);
-            }).toThrow(UserNotAutentacateError);
+            }).toThrow(UserNotAutError);
     
             const user = new User('Jose', userEmail, password);
             await app.registerUser(user);
     
             expect(() => {
                 app.authenticate(userEmail, 'senha_incorreta');
-            }).toThrow(UserNotAutentacateError);
+            }).toThrow(UserNotAutError);
     
             const authenticated = await app.authenticate(userEmail, password);
             expect(authenticated).toBeTruthy();
