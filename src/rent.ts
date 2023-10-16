@@ -5,9 +5,10 @@ export class Rent {
     public end: Date = undefined
 
     constructor(
-        public user: User,
         public bike: Bike,
+        public user: User,
         public start: Date,
+        public id?: string
     ) {}
 
 
