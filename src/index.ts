@@ -1,10 +1,10 @@
-import { User } from "./user"
-import { Bike } from "./bike"
-import { Rent } from "./rent"
-import { App } from "./app"
+import { App } from "./app";
+import { Bike } from "./bike";
+import { Rent } from "./rent";
+import { User } from "./user";
 import sinon from 'sinon'
 
-async function main(){
+async function main() {
     const clock = sinon.useFakeTimers();
     const app = new App()
     const user1 = new User('Jose', 'jose@mail.com', '1234')
@@ -21,4 +21,3 @@ async function main(){
 }
 
 main()
-
